@@ -34,10 +34,14 @@ func (v *Vault) RotateContext(ctx context.Context, oldID string, certPEM, keyPEM
 	delay := v.rotateIODelay
 	waiter := v.ioWait
 	v.mu.Unlock()
+	var waitErr error
 	if delay > 0 && waiter != nil {
-		_ = waiter.Wait(context.Background(), delay) // BUG: drop caller ctx
+		waitErr = waiter.Wait(ctx, delay) // 可被 ctx 打断的 I/O 等待
 	}
 	v.mu.Lock()
+	if waitErr != nil {
+		return "", mapCtxErr(waitErr)
+	}
 	if v.closed || v.st == nil {
 		return "", ErrClosed
 	}
