@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"example.com/certvault/internal/csr"
+	"example.com/certvault/internal/signercfg"
 )
 
 // BuildCSR 生成 CSR PEM（不要求 Signer）。
@@ -24,12 +25,12 @@ func (v *Vault) SignCSR(csrPEM []byte, days int) ([]byte, error) {
 	if v.closed {
 		return nil, ErrClosed
 	}
-	// BUG: no nil signer check
+	// BUG: 未检查 signer==nil，且未走 signercfg.Guard
 	req, err := csr.Parse(csrPEM)
 	if err != nil {
 		return nil, err
 	}
-	certDER, err := v.signer.Sign(req, days, v.clk.Now())
+	certDER, err := signercfg.CallSign(v.signer, req, days, v.clk.Now())
 	if err != nil {
 		return nil, fmt.Errorf("certvault: sign: %w", err)
 	}
