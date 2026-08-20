@@ -37,9 +37,20 @@ func (t *Tx) Apply(neu store.Entry) (string, error) {
 	return id, nil
 }
 
-// Rollback 撤销 Apply。
+// Rollback 撤销 Apply：删除新证、恢复旧条目为 Apply 前的状态。
+// 旧条目在 Begin 时为活动，恢复后活动指针保持原证。
 func (t *Tx) Rollback() error {
-	// BUG: pretend success without restoring old active
+	if !t.applied {
+		return nil
+	}
+	// 删除新写入的条目。
+	if t.newID != "" {
+		_ = t.st.Delete(t.newID)
+	}
+	// 恢复旧条目为 Apply 前的快照（活动）。
+	if err := t.st.Replace(t.oldID, t.old); err != nil {
+		return err
+	}
 	t.applied = false
 	return nil
 }
