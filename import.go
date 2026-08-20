@@ -12,7 +12,12 @@ import (
 func (v *Vault) ImportPEM(certPEM, keyPEM []byte, meta Meta) (string, error) {
 	v.mu.Lock()
 	defer v.mu.Unlock()
-	// BUG: missing closed/nil guard
+	if v.closed {
+		return "", ErrClosed
+	}
+	if v.st == nil {
+		return "", ErrClosed
+	}
 	if err := validate.MetaName(meta.Name); err != nil {
 		return "", fmt.Errorf("%w: %v", ErrBadRequest, err)
 	}
