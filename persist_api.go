@@ -22,7 +22,7 @@ func (v *Vault) persistLocked() error {
 		Rotates:   v.rotates,
 		Scans:     v.scans,
 	}
-	if err := persist.Save(v.persistPath, snap); err != nil {
+	if err := persist.Save(v.persistPath, snap); err != nil { // Save must close temp
 		return fmt.Errorf("%w: %v", ErrPersist, err)
 	}
 	return nil
