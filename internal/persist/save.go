@@ -28,13 +28,18 @@ func Save(path string, snap Snapshot) error {
 		return err
 	}
 	tmpName := tmp.Name()
+	defer func() { _ = os.Remove(tmpName) }()
 	if _, err := tmp.Write(data); err != nil {
+		_ = tmp.Close()
 		return err
 	}
 	if err := tmp.Sync(); err != nil {
+		_ = tmp.Close()
 		return err
 	}
-	// BUG: missing tmp.Close() before rename
+	if err := tmp.Close(); err != nil {
+		return err
+	}
 	return os.Rename(tmpName, path)
 }
 
