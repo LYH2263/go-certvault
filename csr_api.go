@@ -24,7 +24,9 @@ func (v *Vault) SignCSR(csrPEM []byte, days int) ([]byte, error) {
 	if v.closed {
 		return nil, ErrClosed
 	}
-	// BUG: no nil signer check
+	if v.signer == nil {
+		return nil, ErrNoSigner
+	}
 	req, err := csr.Parse(csrPEM)
 	if err != nil {
 		return nil, err
