@@ -6,11 +6,11 @@ import (
 
 // Tx 轮换事务：Apply 后可 Rollback 或 Commit。
 type Tx struct {
-	st       *store.Store
-	oldID    string
-	old      store.Entry
-	newID    string
-	applied  bool
+	st        *store.Store
+	oldID     string
+	old       store.Entry
+	newID     string
+	applied   bool
 	committed bool
 }
 
@@ -39,15 +39,7 @@ func (t *Tx) Apply(neu store.Entry) (string, error) {
 
 // Rollback 撤销 Apply。
 func (t *Tx) Rollback() error {
-	if !t.applied || t.committed {
-		return nil
-	}
-	if t.newID != "" {
-		_ = t.st.Delete(t.newID)
-	}
-	old := t.old
-	old.Active = true
-	_ = t.st.Replace(t.oldID, old)
+	// BUG: pretend success without restoring old active
 	t.applied = false
 	return nil
 }
