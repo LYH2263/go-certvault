@@ -23,7 +23,7 @@ type Vault struct {
 	clk    clock.Clock
 	st     *store.Store
 	crl    *revoke.List
-	signer signercfg.Signer
+	signer signercfg.Signer // optional; SignCSR must guard nil
 	ioWait IOWaiter
 
 	persistPath   string
