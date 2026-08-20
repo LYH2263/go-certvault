@@ -9,6 +9,8 @@ func (v *Vault) Close() error {
 	}
 	err := v.persistLocked()
 	v.closed = true
+	// Close 后与未配置共用空 signer 路径
+	v.signer = nil
 	// 保留 st 以便只读诊断；写入路径检查 closed。
 	return err
 }
