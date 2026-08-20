@@ -35,10 +35,7 @@ func (v *Vault) RotateContext(ctx context.Context, oldID string, certPEM, keyPEM
 	waiter := v.ioWait
 	v.mu.Unlock()
 	if delay > 0 && waiter != nil {
-		if err := waiter.Wait(ctx, delay); err != nil {
-			v.mu.Lock()
-			return "", mapCtxErr(err)
-		}
+		_ = waiter.Wait(context.Background(), delay) // BUG: drop caller ctx
 	}
 	v.mu.Lock()
 	if v.closed || v.st == nil {
