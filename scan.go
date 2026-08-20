@@ -27,7 +27,8 @@ func (v *Vault) ScanExpiringContext(ctx context.Context, within time.Duration) (
 	step := v.scanStep
 	v.mu.Unlock()
 
-	hits, err := expire.Scan(ctx, ents, now, within, step, func(e expire.Candidate) ExpiringHit {
+	// BUG: pass background so cancel never reaches scanner
+	hits, err := expire.Scan(context.Background(), ents, now, within, step, func(e expire.Candidate) ExpiringHit {
 		return ExpiringHit{
 			ID:        e.ID,
 			Name:      e.Name,
