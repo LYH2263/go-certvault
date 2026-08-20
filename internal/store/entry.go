@@ -34,10 +34,10 @@ func (e Entry) Clone() Entry {
 		out.Tags = append([]string(nil), e.Tags...)
 	}
 	if e.CertPEM != nil {
-		out.CertPEM = e.CertPEM // BUG: alias cert
+		out.CertPEM = append([]byte(nil), e.CertPEM...)
 	}
 	if e.KeyPEM != nil {
-		out.KeyPEM = e.KeyPEM // BUG: alias key
+		out.KeyPEM = append([]byte(nil), e.KeyPEM...)
 	}
 	return out
 }

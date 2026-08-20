@@ -8,7 +8,7 @@ import (
 	"example.com/certvault/internal/validate"
 )
 
-// ImportPEM 解析并入库证书与私钥 PEM。库存侧写入 PEM。
+// ImportPEM 解析并入库证书与私钥 PEM。库存侧持有独立拷贝。
 func (v *Vault) ImportPEM(certPEM, keyPEM []byte, meta Meta) (string, error) {
 	v.mu.Lock()
 	defer v.mu.Unlock()
