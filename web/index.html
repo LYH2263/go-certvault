@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TLS 证书库</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header>
+    <h1>TLS 证书库</h1>
+    <p>导入 PEM · 到期扫描 · 轮换预览 · trust bundle</p>
+  </header>
+  <main>
+    <section class="panel">
+      <h2>证书列表</h2>
+      <p id="stats-line" class="muted">—</p>
+      <button type="button" id="btn-refresh" class="ghost">刷新</button>
+      <ul id="cert-list"></ul>
+    </section>
+    <section class="panel">
+      <h2>导入证书</h2>
+      <form id="import-form">
+        <input id="imp-name" placeholder="名称，如 api" required />
+        <textarea id="imp-cert" rows="6" placeholder="-----BEGIN CERTIFICATE-----" required></textarea>
+        <textarea id="imp-key" rows="6" placeholder="-----BEGIN PRIVATE KEY-----" required></textarea>
+        <button type="submit">导入</button>
+      </form>
+      <pre id="import-out" class="out"></pre>
+    </section>
+    <section class="panel">
+      <h2>到期扫描 / 轮换预览</h2>
+      <form id="scan-form">
+        <input id="scan-days" type="number" value="30" min="1" />
+        <button type="submit">扫描</button>
+      </form>
+      <pre id="scan-out" class="out"></pre>
+      <form id="preview-form">
+        <input id="prev-id" placeholder="旧证书 ID" />
+        <textarea id="prev-cert" rows="4" placeholder="新证书 PEM"></textarea>
+        <textarea id="prev-key" rows="4" placeholder="新私钥 PEM"></textarea>
+        <button type="submit">轮换预览</button>
+      </form>
+      <pre id="preview-out" class="out"></pre>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.DS_Store
+*.exe
+*.test
+*.out
+/tmp/
+*.pem
+*.key
+/data/
