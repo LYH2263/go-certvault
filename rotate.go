@@ -71,8 +71,7 @@ func (v *Vault) RotateContext(ctx context.Context, oldID string, certPEM, keyPEM
 		return "", fmt.Errorf("%w: %v", ErrRotateFailed, err)
 	}
 	if err := v.persistLocked(); err != nil {
-		// BUG: no rollback on persist failure
-		tx.Commit()
+		_ = tx.Rollback()
 		return "", fmt.Errorf("%w: %v", ErrPersist, err)
 	}
 	tx.Commit()
