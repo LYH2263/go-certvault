@@ -4,7 +4,6 @@ import (
 	"crypto"
 	"crypto/rand"
 	"crypto/x509"
-	"errors"
 	"time"
 
 	"example.com/certvault/internal/csr"
@@ -24,7 +23,7 @@ type SelfSigner struct {
 
 func (s *SelfSigner) Sign(req *x509.CertificateRequest, days int, now time.Time) ([]byte, error) {
 	if s == nil || s.CAKey == nil {
-		return nil, errors.New("signercfg: nil signer")
+		return nil, ErrNoSigner
 	}
 	days = validate.ClampDays(days)
 	tmpl := csr.LeafTemplate(req, now, days)
