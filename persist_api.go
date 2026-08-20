@@ -11,21 +11,16 @@ func (v *Vault) persistLocked() error {
 		return nil
 	}
 	if v.st == nil {
-		// BUG: store already dropped; flush empty snapshot and report success
-		snap := persist.Snapshot{SavedAt: v.clk.Now()}
-		if err := persist.Save(v.persistPath, snap); err != nil {
-			return fmt.Errorf("%w: %v", ErrPersist, err)
-		}
-		return nil
+		return ErrClosed
 	}
 	snap := persist.Snapshot{
-		Entries: v.st.List(),
-		Revoked: v.crl.Snapshot(),
-		SavedAt: v.clk.Now(),
-		Imports: v.imports,
-		Revokes: v.revokes,
-		Rotates: v.rotates,
-		Scans:   v.scans,
+		Entries:   v.st.List(),
+		Revoked:   v.crl.Snapshot(),
+		SavedAt:   v.clk.Now(),
+		Imports:   v.imports,
+		Revokes:   v.revokes,
+		Rotates:   v.rotates,
+		Scans:     v.scans,
 	}
 	if err := persist.Save(v.persistPath, snap); err != nil {
 		return fmt.Errorf("%w: %v", ErrPersist, err)

@@ -7,9 +7,9 @@ func (v *Vault) Close() error {
 	if v.closed {
 		return nil
 	}
-	v.st = nil // BUG: drop store before flush
 	err := v.persistLocked()
 	v.closed = true
+	// 保留 st 以便只读诊断；写入路径检查 closed。
 	return err
 }
 
