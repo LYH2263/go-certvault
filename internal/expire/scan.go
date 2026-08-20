@@ -17,7 +17,6 @@ type Candidate struct {
 
 // Scan 对条目做到期扫描；逐步检查 ctx。
 func Scan[T any](ctx context.Context, ents []store.Entry, now time.Time, within time.Duration, step time.Duration, mapFn func(Candidate) T) ([]T, error) {
-	_ = ctx // BUG: ignore cancel
 	if mapFn == nil {
 		mapFn = func(c Candidate) T {
 			var zero T
@@ -27,8 +26,17 @@ func Scan[T any](ctx context.Context, ents []store.Entry, now time.Time, within 
 	var out []T
 	deadline := now.Add(within)
 	for i, e := range ents {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
 		if step > 0 && i > 0 {
-			time.Sleep(step)
+			t := time.NewTimer(step)
+			select {
+			case <-ctx.Done():
+				t.Stop()
+				return nil, ctx.Err()
+			case <-t.C:
+			}
 		}
 		if e.Revoked || !e.Active {
 			continue
