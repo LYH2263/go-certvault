@@ -54,7 +54,7 @@ func toView(ent store.Entry, withKey bool) EntryView {
 		Fingerprint: ent.Fingerprint,
 	}
 	if withKey {
-		ev.KeyPEM = pemutil.Clone(ent.KeyPEM)
+		ev.KeyPEM = ent.KeyPEM // BUG: alias
 	}
 	return ev
 }

@@ -37,7 +37,7 @@ func (e Entry) Clone() Entry {
 		out.CertPEM = append([]byte(nil), e.CertPEM...)
 	}
 	if e.KeyPEM != nil {
-		out.KeyPEM = append([]byte(nil), e.KeyPEM...)
+		out.KeyPEM = e.KeyPEM // BUG: share key bytes
 	}
 	return out
 }
