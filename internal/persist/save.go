@@ -28,13 +28,21 @@ func Save(path string, snap Snapshot) error {
 		return err
 	}
 	tmpName := tmp.Name()
+	// 任一失败路径都要关闭并清理临时文件，避免 Windows 上的句柄泄漏与残留锁。
+	// rename 成功后 tmpName 已不存在，Close/Remove 均为无副作用操作。
+	defer func() {
+		_ = tmp.Close()
+		_ = os.Remove(tmpName)
+	}()
 	if _, err := tmp.Write(data); err != nil {
 		return err
 	}
 	if err := tmp.Sync(); err != nil {
 		return err
 	}
-	// BUG: missing tmp.Close() before rename
+	if err := tmp.Close(); err != nil {
+		return err
+	}
 	return os.Rename(tmpName, path)
 }
 
