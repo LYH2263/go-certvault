@@ -7,9 +7,10 @@ func (v *Vault) Close() error {
 	if v.closed {
 		return nil
 	}
+	err := v.persistLocked()
 	v.closed = true
-	v.st = nil // BUG: drop store before callers finish; Import may nil-deref
-	return nil
+	// 保留 st 以便只读诊断；写入路径检查 closed。
+	return err
 }
 
 // Closed 是否已关闭。
