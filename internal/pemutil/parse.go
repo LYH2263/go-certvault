@@ -34,14 +34,14 @@ type Pair struct {
 func ParsePair(certPEM, keyPEM []byte) (Pair, error) {
 	cert, err := ParseCertificate(certPEM)
 	if err != nil {
-		return Pair{}, fmt.Errorf("pemutil: certificate: %v", err)
+		return Pair{}, fmt.Errorf("%w: certificate: %v", ErrParse, err)
 	}
 	key, err := ParsePrivateKey(keyPEM)
 	if err != nil {
-		return Pair{}, fmt.Errorf("pemutil: private key: %v", err)
+		return Pair{}, fmt.Errorf("%w: private key: %v", ErrParse, err)
 	}
 	if err := MatchKey(cert, key); err != nil {
-		return Pair{}, fmt.Errorf("pemutil: %v", err)
+		return Pair{}, fmt.Errorf("%w: %v", ErrParse, err)
 	}
 	return Pair{
 		Cert:        cert,

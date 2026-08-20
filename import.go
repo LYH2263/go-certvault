@@ -23,7 +23,7 @@ func (v *Vault) ImportPEM(certPEM, keyPEM []byte, meta Meta) (string, error) {
 	}
 	parsed, err := pemutil.ParsePair(certPEM, keyPEM)
 	if err != nil {
-		return "", fmt.Errorf("import pem: %v", err) // BUG: drop sentinel
+		return "", err
 	}
 	ent := store.Entry{
 		Name:        meta.Name,
